@@ -1,0 +1,51 @@
+[gd_scene load_steps=10 format=3 uid="uid://cwk4xehpf5l54"]
+
+[ext_resource type="PackedScene" uid="uid://cy03d57iyrci" path="res://addons/godot-xr-tools/hands/scenes/highpoly/left_physics_hand.tscn" id="1_7pn1x"]
+[ext_resource type="PackedScene" uid="uid://kcqomcjq52np" path="res://addons/godot-xr-tools/hands/scenes/highpoly/right_physics_hand.tscn" id="2_4auyg"]
+[ext_resource type="PackedScene" uid="uid://diyu06cw06syv" path="res://addons/godot-xr-tools/player/player_body.tscn" id="3_2kwdy"]
+[ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="4_il6pg"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_qkycp"]
+size = Vector2(20, 20)
+
+[sub_resource type="Gradient" id="Gradient_yl3eo"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_f87qc"]
+noise_type = 2
+frequency = 0.1282
+cellular_return_type = 0
+metadata/_preview_in_3d_space_ = true
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ywvwt"]
+seamless = true
+color_ramp = SubResource("Gradient_yl3eo")
+noise = SubResource("FastNoiseLite_f87qc")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wws2x"]
+albedo_texture = SubResource("NoiseTexture2D_ywvwt")
+
+[node name="main" type="Node3D"]
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="LeftXRController3D" type="XRController3D" parent="XROrigin3D"]
+tracker = &"left_hand"
+
+[node name="LeftPhysicsHand" parent="XROrigin3D/LeftXRController3D" instance=ExtResource("1_7pn1x")]
+
+[node name="RightXRController3D" type="XRController3D" parent="XROrigin3D"]
+tracker = &"right_hand"
+
+[node name="RightPhysicsHand" parent="XROrigin3D/RightXRController3D" instance=ExtResource("2_4auyg")]
+
+[node name="PlayerBody" parent="XROrigin3D" instance=ExtResource("3_2kwdy")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_qkycp")
+surface_material_override/0 = SubResource("StandardMaterial3D_wws2x")
+
+[node name="StartXR" parent="." instance=ExtResource("4_il6pg")]
+physics_rate_multiplier = 1
